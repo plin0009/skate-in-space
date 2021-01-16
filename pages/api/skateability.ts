@@ -1,5 +1,5 @@
 import { NextApiHandler } from "next";
-import { parseCookies } from "nookies";
+import getAccessToken from "../../utils/api/accessToken";
 import { getSkateabilityScore } from "../../utils/skateability";
 
 export interface ArtistObject {
@@ -33,26 +33,9 @@ export interface TrackSkateability {
 }
 
 const Skateability: NextApiHandler = async (req, res) => {
-  const cookies = parseCookies({ req });
-
-  let access_token: string;
-  if (!("access_token" in cookies)) {
-    if (!("refresh_token" in cookies)) {
-      res.status(403);
-      res.send("No tokens");
-      return;
-    }
-    const refreshResponse = await fetch("/api/refresh");
-
-    if (refreshResponse.status !== 200) {
-      res.status(403);
-      res.send("Could not use refresh token");
-      return;
-    }
-    const data = await refreshResponse.json();
-    access_token = data.access_token;
-  } else {
-    access_token = cookies.access_token;
+  const accessToken = await getAccessToken(req, res);
+  if (accessToken === null) {
+    return;
   }
 
   // get long_term top 50 and recent top 50
@@ -61,7 +44,7 @@ const Skateability: NextApiHandler = async (req, res) => {
 
   const headers = {
     "Content-Type": "application/json",
-    Authorization: "Bearer " + access_token,
+    Authorization: "Bearer " + accessToken,
   };
 
   const longTermQuery = new URLSearchParams({
