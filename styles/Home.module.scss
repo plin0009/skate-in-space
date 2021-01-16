@@ -1,6 +1,5 @@
 .container {
   min-height: 100vh;
-  padding: 0 0.5rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -8,7 +7,7 @@
 }
 
 .main {
-  padding: 5rem 0;
+  padding: 5rem 0.5rem;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -30,4 +29,13 @@
 .description {
   line-height: 1.5;
   font-size: 1.5rem;
+}
+
+.spotifybutton {
+  border-radius: 1000px;
+  background-color: #1db954;
+  padding: 1em 2em;
+  //font-weight: bold;
+  font-size: 1.5em;
+  margin-top: 1em;
 }
