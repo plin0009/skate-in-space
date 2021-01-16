@@ -31,11 +31,61 @@
   font-size: 1.5rem;
 }
 
-.spotifybutton {
+.skateableTracks {
+  padding: 1em;
+  max-width: 100%;
+
+  overflow-y: scroll;
+
+  .skateTrack {
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    color: #000;
+    margin: 1em;
+    padding: 0.5em 1em;
+    border-radius: 1em;
+
+    .trackDuration,
+    .trackScore {
+      width: 3em;
+      text-align: center;
+    }
+
+    .trackScore {
+      font-weight: bold;
+    }
+
+    .trackMain {
+      flex: 1;
+      margin: 0 1em;
+    }
+    .trackTitle {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .trackArtists {
+      font-size: 0.75em;
+    }
+
+    .playTrackButton {
+      all: unset;
+      cursor: pointer;
+      border-radius: 1000px;
+      background-color: #1db954;
+      padding: 0.75em 1.25em;
+      color: #fff;
+    }
+  }
+}
+
+.mainButton {
+  all: unset;
+  cursor: pointer;
+  margin: 1em;
   border-radius: 1000px;
   background-color: #1db954;
-  padding: 1em 2em;
-  //font-weight: bold;
-  font-size: 1.5em;
-  margin-top: 1em;
+  padding: 0.75em 1.25em;
+  color: #fff;
 }

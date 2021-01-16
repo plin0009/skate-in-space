@@ -1,12 +1,13 @@
 import { NextApiHandler } from "next";
 import { parseCookies } from "nookies";
+import { getSkateabilityScore } from "../../utils/skateability";
 
-interface ArtistObject {
+export interface ArtistObject {
   id: string;
   name: string;
   uri: string;
 }
-interface TrackObject {
+export interface TrackObject {
   id: string;
   name: string;
   uri: string;
@@ -15,7 +16,7 @@ interface TrackObject {
   explicit: boolean;
 }
 
-interface AudioFeaturesObject {
+export interface AudioFeaturesObject {
   id: string;
   danceability: number;
   duration_ms: number;
@@ -23,6 +24,12 @@ interface AudioFeaturesObject {
   loudness: number;
   tempo: number;
   valence: number;
+}
+
+export interface TrackSkateability {
+  track: TrackObject;
+  audioFeatures: AudioFeaturesObject;
+  skateabilityScore: number;
 }
 
 const Skateability: NextApiHandler = async (req, res) => {
@@ -50,6 +57,7 @@ const Skateability: NextApiHandler = async (req, res) => {
 
   // get long_term top 50 and recent top 50
   const topTracks: TrackObject[] = [];
+  const topTracksById: { [key: string]: TrackObject } = {};
 
   const headers = {
     "Content-Type": "application/json",
@@ -61,7 +69,7 @@ const Skateability: NextApiHandler = async (req, res) => {
     limit: "50",
   });
   const shortTermQuery = new URLSearchParams({
-    time_range: "long_term",
+    time_range: "short_term",
     limit: "50",
   });
 
@@ -72,7 +80,10 @@ const Skateability: NextApiHandler = async (req, res) => {
     );
     if (longTermTop50Response.status === 200) {
       const data = await longTermTop50Response.json();
-      topTracks.push(...data.items);
+      data.items.forEach((item: TrackObject) => {
+        topTracksById[item.id] = item;
+        topTracks.push(item);
+      });
     } else {
       console.log(longTermTop50Response.status);
       console.log("couldn't get long-term tracks");
@@ -84,7 +95,13 @@ const Skateability: NextApiHandler = async (req, res) => {
     );
     if (shortTermTop50Response.status === 200) {
       const data = await shortTermTop50Response.json();
-      topTracks.push(...data.items);
+      data.items.forEach((item: TrackObject) => {
+        if (item.id in topTracksById) {
+          return;
+        }
+        topTracksById[item.id] = item;
+        topTracks.push(item);
+      });
     } else {
       console.log(shortTermTop50Response.status);
       console.log("couldn't get short-term tracks");
@@ -114,18 +131,7 @@ const Skateability: NextApiHandler = async (req, res) => {
       const audioFeatures: AudioFeaturesObject[] = data.audio_features;
       const skateabilities = audioFeatures.map((audioFeatures, index) => {
         const track = topTracks[index];
-        const { tempo, energy } = audioFeatures;
-        const optimalTempo = 90;
-        const optimalEnergy = 0.6;
-
-        const atLeastZero = (n) => Math.max(0, n);
-
-        const tempoScore = atLeastZero(100 - Math.abs(tempo - optimalTempo));
-        const energyScore = atLeastZero(
-          100 - 10 * Math.abs(energy - optimalEnergy)
-        );
-
-        const skateabilityScore = 0.5 * tempoScore + 0.5 * energyScore;
+        const skateabilityScore = getSkateabilityScore(audioFeatures);
 
         return { track, audioFeatures, skateabilityScore };
       });
