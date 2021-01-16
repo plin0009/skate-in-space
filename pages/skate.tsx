@@ -12,6 +12,9 @@ import { TrackObject, TrackSkateability } from "./api/skateability";
 import { getDisplayDuration } from "../utils/track";
 import Footer from "../components/Footer";
 
+type SkateMap = any;
+type SkateMapStatus = "not loading" | "loading" | "error" | "loaded";
+
 const Skate = () => {
   const { player, deviceId, isReady } = useSpotifyWebPlaybackSdk({
     name: "SKATE IN SPACE",
@@ -32,6 +35,11 @@ const Skate = () => {
 
   const [chosenTrack, setChosenTrack] = useState<TrackObject | null>(null);
 
+  const [skateMapStatus, setSkateMapStatus] = useState<SkateMapStatus>(
+    "not loading"
+  );
+  const [skateMap, setSkateMap] = useState<SkateMap | null>(null);
+
   const getSkateability = async () => {
     const response = await fetch("/api/skateability");
     if (response.status !== 200) {
@@ -40,6 +48,20 @@ const Skate = () => {
     }
     const data = await response.json();
     setSkateableTracks(data.tracks);
+  };
+
+  const loadSkateMap = async (track: TrackObject) => {
+    setChosenTrack(track);
+    setSkateMapStatus("loading"); // transitions to waiting screen
+
+    const response = await fetch(`/api/skatemap?id=${track.id}`);
+    if (response.status === 200) {
+      const data = await response.json();
+      setSkateMap(data);
+      setSkateMapStatus("loaded");
+    } else {
+      setSkateMapStatus("error");
+    }
   };
 
   const titleText =
@@ -54,7 +76,13 @@ const Skate = () => {
         </Head>
         <main className={styles.main}>
           <h1 className={styles.title}>{titleText}</h1>
-          {skateableTracks.length === 0 ? (
+          {skateMapStatus === "loaded" ? (
+            <div>Loaded skate map</div>
+          ) : skateMapStatus === "loading" ? (
+            <div>Loading skate map</div>
+          ) : skateMapStatus === "error" ? (
+            <div>Error loading skate map</div>
+          ) : skateableTracks.length === 0 ? (
             <button
               onClick={() => {
                 getSkateability();
@@ -70,8 +98,7 @@ const Skate = () => {
                   <button
                     className={styles.playTrackButton}
                     onClick={() => {
-                      setChosenTrack(track);
-                      // transition to waiting screen for heightmap generation
+                      loadSkateMap(track);
                     }}
                   >
                     Skate
