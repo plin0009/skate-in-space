@@ -12,7 +12,8 @@
     "nookies": "^2.5.0",
     "react": "17.0.1",
     "react-dom": "17.0.1",
-    "sass": "^1.32.4"
+    "sass": "^1.32.4",
+    "use-spotify-web-playback-sdk": "^0.2.2"
   },
   "devDependencies": {
     "@types/node": "^14.14.21",

@@ -10,11 +10,11 @@ const Home = () => {
   const redirectUri = `${host}/api/callback`;
   const scope = [
     "playlist-modify-public",
-    "user-read-currently-playing",
-    "user-modify-playback-state",
+    "user-read-private",
+    "streaming",
   ].join("%20");
 
-  const authURL = `https://accounts.spotify.com/authorize?client_id=${process.env.SPOTIFY_CLIENT_ID}&response_type=code&redirect_uri=${redirectUri}&scope=${scope}`;
+  const authURL = `https://accounts.spotify.com/authorize?client_id=${process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID}&response_type=code&redirect_uri=${redirectUri}&scope=${scope}`;
   return (
     <>
       <div className={styles.container}>
