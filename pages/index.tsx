@@ -10,6 +10,7 @@ const Home = () => {
   const redirectUri = `${host}/api/callback`;
   const scope = [
     "playlist-modify-public",
+    "user-top-read",
     "user-read-private",
     "streaming",
   ].join("%20");

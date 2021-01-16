@@ -43,7 +43,9 @@ const Refresh: NextApiHandler = async (req, res) => {
       maxAge: expires_in,
     });
     res.status(200);
-    res.send("Retrieved new access token");
+    res.send({
+      access_token,
+    });
   } catch (e) {
     console.log(e);
     res.status(500);
