@@ -2,6 +2,12 @@ import { NextApiHandler } from "next";
 import getAccessToken from "../../utils/api/accessToken";
 import { getSkateabilityScore } from "../../utils/skateability";
 
+export interface AlbumObject {
+  id: string;
+  name: string;
+  uri: string;
+}
+
 export interface ArtistObject {
   id: string;
   name: string;
@@ -14,6 +20,8 @@ export interface TrackObject {
   artists: ArtistObject[];
   duration_ms: number;
   explicit: boolean;
+  album: AlbumObject;
+  track_number: number;
 }
 
 export interface AudioFeaturesObject {

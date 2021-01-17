@@ -97,3 +97,10 @@
 .canvas {
   min-height: 100vh;
 }
+
+.playerOverlay {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  padding: 0.5em 2em;
+}

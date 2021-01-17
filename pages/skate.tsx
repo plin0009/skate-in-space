@@ -12,6 +12,7 @@ import { TrackObject, TrackSkateability } from "./api/skateability";
 import { getDisplayDuration } from "../utils/track";
 import Footer from "../components/Footer";
 import ThreeCanvas from "../components/3d/ThreeCanvas";
+import PlayerOverlay from "../components/PlayerOverlay";
 
 type SkateMap = any;
 type SkateMapStatus = "not loading" | "loading" | "error" | "loaded";
@@ -54,7 +55,10 @@ const Skate = () => {
         setSkateMapStatus("not loading");
         setSkateMap(null);
         setPlayerState(null);
-        setChosenTrack(null);
+        if (chosenTrack !== null) {
+          pause();
+          setChosenTrack(null);
+        }
       }
       setPlayerState({
         paused,
@@ -63,6 +67,13 @@ const Skate = () => {
       });
     },
   });
+
+  const pause = async () => {
+    const response = await fetch(`/api/pause-track?deviceId=${deviceId}`);
+    if (!response.ok) {
+      // whatever
+    }
+  };
 
   const [skateableTracks, setSkateableTracks] = useState<TrackSkateability[]>(
     []
@@ -96,8 +107,24 @@ const Skate = () => {
       const data = await response.json();
       setSkateMap(data);
       setSkateMapStatus("loaded");
+      await playChosenTrack(track);
     } else {
       setSkateMapStatus("error");
+    }
+  };
+
+  const playChosenTrack = async (track: TrackObject) => {
+    const query = new URLSearchParams({
+      albumUri: track.album.uri,
+      trackNumber: "" + track.track_number,
+      deviceId,
+    });
+    const response = await fetch(`/api/start-track?${query}`);
+    if (response.ok) {
+      // nice
+    } else {
+      console.log(`couldn't play, oh well`);
+      // todo: tell user to play
     }
   };
 
@@ -112,11 +139,18 @@ const Skate = () => {
           <link rel="icon" href="/favicon.ico" />
         </Head>
         {skateMapStatus === "loaded" ? (
-          <ThreeCanvas
-            className={styles.canvas}
-            skateMap={skateMap}
-            playerState={playerState}
-          />
+          <>
+            <ThreeCanvas
+              className={styles.canvas}
+              skateMap={skateMap}
+              playerState={playerState}
+            />
+            <PlayerOverlay
+              className={styles.playerOverlay}
+              playerState={playerState}
+              chosenTrack={chosenTrack}
+            />
+          </>
         ) : (
           <main className={styles.main}>
             <h1 className={styles.title}>{titleText}</h1>
