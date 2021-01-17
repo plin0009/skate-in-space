@@ -50,7 +50,7 @@ const Skate = () => {
       position,
       track_window: { current_track },
     }: WebPlaybackState) => {
-      if (current_track.id !== chosenTrack.id) {
+      if (chosenTrack === null || current_track.id !== chosenTrack.id) {
         setSkateMapStatus("not loading");
         setSkateMap(null);
         setPlayerState(null);

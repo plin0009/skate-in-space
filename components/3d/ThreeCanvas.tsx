@@ -2,7 +2,6 @@ import { useEffect, useMemo } from "react";
 import { Canvas } from "react-three-fiber";
 import { SkateMap } from "../../utils/skatemap";
 import SkateMapPlane from "./SkateMapPlane";
-import Cube from "./Cube";
 
 import * as CANNON from "cannon-es";
 import Controls from "./Controls";
@@ -23,13 +22,15 @@ const ThreeCanvas: React.FC<ThreeCanvasProps> = (props) => {
     return { world };
   }, []);
 
-  useEffect(() => {
-    const animate = () => {
-      requestAnimationFrame(animate);
-      world.step(1 / 60);
-    };
-    animate();
-  }, []);
+  /*
+   *useEffect(() => {
+   *  const animate = () => {
+   *    requestAnimationFrame(animate);
+   *    world.step(1 / 60);
+   *  };
+   *  animate();
+   *}, []);
+   */
 
   return (
     <Canvas
@@ -43,7 +44,7 @@ const ThreeCanvas: React.FC<ThreeCanvasProps> = (props) => {
       <ambientLight intensity={0.5} />
       <pointLight castShadow position={[0, 2, -3]} intensity={0.5} />
       <SkateMapPlane data={skateMap} world={world} />
-      <Controls playerState={playerState} testing={testing} />
+      <Controls world={world} playerState={playerState} testing={testing} />
     </Canvas>
   );
 };
