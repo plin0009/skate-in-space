@@ -1,5 +1,5 @@
 // number of seconds per uhhhh height segment
-export const segmentInterval = 0.1;
+export const segmentInterval = 0.05;
 const widthSegments = 100;
 
 interface AudioAnalysisObject {
@@ -90,21 +90,11 @@ const getSkateMap = (audioAnalysis: AudioAnalysisObject): SkateMap => {
           (2 * Math.PI * distanceForSection) / sections[currentSection].duration
         );
 
-      height += Math.cos(x / 3) / 2;
+      height += Math.cos(-x / 3) / 1;
 
       height -=
         2 *
         Math.cos(((x + y - widthSegments / 2) * 2 * Math.PI) / widthSegments);
-
-      if (false && x >= widthSegments / 2) {
-        height +=
-          0 *
-          (-0.1 +
-            0.2 *
-              Math.cos(
-                (2 * Math.PI * distanceForBeat) / beats[currentBeat].duration
-              ));
-      }
 
       /*
        *if (true || x >= widthSegments / 2) {
