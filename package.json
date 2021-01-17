@@ -8,11 +8,14 @@
     "start": "next start"
   },
   "dependencies": {
+    "cannon-es": "^0.16.0",
     "next": "10.0.5",
     "nookies": "^2.5.0",
     "react": "17.0.1",
     "react-dom": "17.0.1",
+    "react-three-fiber": "^5.3.14",
     "sass": "^1.32.4",
+    "three": "^0.124.0",
     "use-spotify-web-playback-sdk": "^0.2.2"
   },
   "devDependencies": {
