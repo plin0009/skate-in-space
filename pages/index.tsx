@@ -15,7 +15,7 @@ const Home = () => {
     "streaming",
   ].join("%20");
 
-  const authURL = `https://accounts.spotify.com/authorize?client_id=${process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID}&response_type=code&redirect_uri=${redirectUri}&scope=${scope}`;
+  const authURL = `https://accounts.spotify.com/authorize?client_id=374a99709a344c528f65d921b499cf87&response_type=code&redirect_uri=${redirectUri}&scope=${scope}`;
   return (
     <>
       <div className={styles.container}>
