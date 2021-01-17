@@ -34,6 +34,12 @@ const Home = () => {
           <a href={authURL} className={styles.spotifybutton}>
             Log in with Spotify
           </a>
+          <p className={styles.warning}>
+            Note: unfortunately I did not have time to consider Spotify Free
+            users. Additionally, the current deployment you are on only works
+            for short (~1 min) songs due to my unoptimized serverless functions
+            timing out.
+          </p>
         </main>
       </div>
       <Footer />
