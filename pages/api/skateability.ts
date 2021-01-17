@@ -128,6 +128,7 @@ const Skateability: NextApiHandler = async (req, res) => {
       return;
     } else {
       console.log("couldn't get audio features");
+      console.log(await audioFeaturesRequest.text());
       throw new Error();
     }
   } catch (e) {

@@ -1,6 +1,6 @@
 // number of seconds per uhhhh height segment
-const interval = 0.25;
-const widthSegments = 50;
+export const segmentInterval = 0.1;
+const widthSegments = 100;
 
 interface AudioAnalysisObject {
   track: Section & {
@@ -14,7 +14,7 @@ interface AudioAnalysisObject {
   tatums: SDC[];
   segments: (SDC & {
     loudness_start: number;
-    loundess_max_time: number;
+    loudness_max_time: number;
     loudness_max: number;
     loudness_end: number;
     pitches: number[];
@@ -49,15 +49,15 @@ export interface SkateMap {
 
 const getSkateMap = (audioAnalysis: AudioAnalysisObject): SkateMap => {
   // start with 2d heightmap
-  const { track, sections, segments } = audioAnalysis;
-  const heightSegments = Math.round(track.duration / interval);
+  const { track, sections, beats } = audioAnalysis;
+  const heightSegments = Math.round(track.duration / segmentInterval);
 
   const matrix = [];
   let currentSection = 0;
-  let currentSegment = 0;
+  let currentBeat = 0;
 
   for (let y = 0; y <= heightSegments; y++) {
-    const time = y * interval;
+    const time = y * segmentInterval;
 
     let distanceForSection = distance(time, sections, currentSection);
     if (currentSection < sections.length - 1) {
@@ -72,46 +72,78 @@ const getSkateMap = (audioAnalysis: AudioAnalysisObject): SkateMap => {
       }
     }
 
-    let distanceForSegment = distance(time, segments, currentSection);
-    if (currentSegment < segments.length - 1) {
-      let distanceFromNextSegment = distance(
-        time,
-        segments,
-        currentSegment + 1
-      );
-      if (distanceFromNextSegment < distanceForSegment) {
-        distanceForSegment = distanceFromNextSegment;
-        currentSegment++;
+    let distanceForBeat = distance(time, beats, currentBeat);
+    if (currentBeat < beats.length - 1) {
+      let distanceFromNextBeat = distance(time, beats, currentBeat + 1);
+      if (distanceFromNextBeat < distanceForBeat) {
+        distanceForBeat = distanceForBeat;
+        currentBeat++;
       }
     }
 
     const row = [];
     for (let x = 0; x <= widthSegments; x++) {
-      row.push(
+      let height = -2;
+      height +=
+        4 *
+        Math.cos(
+          (2 * Math.PI * distanceForSection) / sections[currentSection].duration
+        );
+
+      height += Math.cos(x / 3) / 2;
+
+      height -=
         2 *
-          (Math.cos(
-            (2 * Math.PI * distanceForSection) /
-              sections[currentSection].duration
-          ) +
-            0.5 *
+        Math.cos(((x + y - widthSegments / 2) * 2 * Math.PI) / widthSegments);
+
+      if (false && x >= widthSegments / 2) {
+        height +=
+          0 *
+          (-0.1 +
+            0.2 *
               Math.cos(
-                (2 * Math.PI * distanceForSegment) /
-                  segments[currentSegment].duration
-              )) +
-          Math.cos(x / 2)
-      );
+                (2 * Math.PI * distanceForBeat) / beats[currentBeat].duration
+              ));
+      }
+
+      /*
+       *if (true || x >= widthSegments / 2) {
+       *  if (sections[currentSection].loudness < track.loudness) {
+       *    height -= Math.sqrt(
+       *      track.loudness - sections[currentSection].loudness
+       *    );
+       *  } else {
+       *    height += Math.sqrt(
+       *      sections[currentSection].loudness - track.loudness
+       *    );
+       *  }
+       *}
+       */
+
+      row.push(height);
     }
     matrix.push(row);
+    if (y === heightSegments) {
+      for (let i = 0; i < 20; i++) {
+        matrix.push(row);
+      }
+    }
   }
 
   return {
     heights: matrix,
     widthSegments,
-    heightSegments,
+    heightSegments: heightSegments + 20,
   };
 };
 
 const distance = (time: number, sdc: SDC[], currentIndex: number) => {
+  if (time - sdc[currentIndex].start < 0) {
+    return Infinity;
+  }
+  if (sdc[currentIndex].start + sdc[currentIndex].duration - time < 0) {
+    return Infinity;
+  }
   return Math.min(
     time - sdc[currentIndex].start,
     sdc[currentIndex].start + sdc[currentIndex].duration - time

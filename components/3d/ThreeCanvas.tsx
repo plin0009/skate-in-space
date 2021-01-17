@@ -8,7 +8,7 @@ import * as CANNON from "cannon-es";
 import Controls from "./Controls";
 
 interface ThreeCanvasProps {
-  className: string;
+  className?: string;
   skateMap: SkateMap;
 }
 
@@ -32,7 +32,7 @@ const ThreeCanvas: React.FC<ThreeCanvasProps> = (props) => {
     <Canvas
       concurrent
       gl={{ antialias: false }}
-      camera={{ position: [0, 2.5, -5], far: 40 }}
+      camera={{ position: [0, 2.5, -5], far: 60 }}
       {...props}
       shadowMap
     >
