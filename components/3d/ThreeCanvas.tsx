@@ -1,19 +1,22 @@
 import { useEffect, useMemo } from "react";
-import { Canvas, useFrame } from "react-three-fiber";
+import { Canvas } from "react-three-fiber";
 import { SkateMap } from "../../utils/skatemap";
 import SkateMapPlane from "./SkateMapPlane";
 import Cube from "./Cube";
 
 import * as CANNON from "cannon-es";
 import Controls from "./Controls";
+import { PlayerState } from "../../pages/skate";
 
 interface ThreeCanvasProps {
   className?: string;
   skateMap: SkateMap;
+  playerState: PlayerState;
+  testing?: boolean;
 }
 
 const ThreeCanvas: React.FC<ThreeCanvasProps> = (props) => {
-  const { skateMap } = props;
+  const { skateMap, playerState, testing } = props;
   const { world } = useMemo(() => {
     const world = new CANNON.World();
     world.gravity.set(0, -10, 0);
@@ -40,11 +43,7 @@ const ThreeCanvas: React.FC<ThreeCanvasProps> = (props) => {
       <ambientLight intensity={0.5} />
       <pointLight castShadow position={[0, 2, -3]} intensity={0.5} />
       <SkateMapPlane data={skateMap} world={world} />
-      {
-        //<Cube world={world} />
-      }
-
-      <Controls />
+      <Controls playerState={playerState} testing={testing} />
     </Canvas>
   );
 };

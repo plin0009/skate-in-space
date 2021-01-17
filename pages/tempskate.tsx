@@ -35,7 +35,12 @@ const TempSkate = () => {
     <>
       <div className={styles.container}>
         {skateMapStatus === "loaded" ? (
-          <ThreeCanvas className={styles.canvas} skateMap={skateMap} />
+          <ThreeCanvas
+            className={styles.canvas}
+            skateMap={skateMap}
+            playerState={null}
+            testing={true}
+          />
         ) : (
           <main className={styles.main}>
             {skateMapStatus === "loading" ? (

@@ -66,7 +66,10 @@ const getSkateMap = (audioAnalysis: AudioAnalysisObject): SkateMap => {
         sections,
         currentSection + 1
       );
-      if (distanceFromNextSection < distanceForSection) {
+      if (
+        distanceForSection === null ||
+        distanceFromNextSection < distanceForSection
+      ) {
         distanceForSection = distanceFromNextSection;
         currentSection++;
       }
@@ -129,10 +132,10 @@ const getSkateMap = (audioAnalysis: AudioAnalysisObject): SkateMap => {
 
 const distance = (time: number, sdc: SDC[], currentIndex: number) => {
   if (time - sdc[currentIndex].start < 0) {
-    return Infinity;
+    return null;
   }
   if (sdc[currentIndex].start + sdc[currentIndex].duration - time < 0) {
-    return Infinity;
+    return null;
   }
   return Math.min(
     time - sdc[currentIndex].start,

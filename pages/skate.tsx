@@ -16,6 +16,23 @@ import ThreeCanvas from "../components/3d/ThreeCanvas";
 type SkateMap = any;
 type SkateMapStatus = "not loading" | "loading" | "error" | "loaded";
 
+export interface PlayerState {
+  paused: boolean;
+  position: number;
+  positionTime: number; //
+}
+
+interface WebPlaybackState {
+  paused: boolean;
+  position: number;
+  track_window: {
+    current_track: {
+      id: string;
+      name: string;
+    };
+  };
+}
+
 const Skate = () => {
   const { player, deviceId, isReady } = useSpotifyWebPlaybackSdk({
     name: "SKATE IN SPACE",
@@ -28,6 +45,23 @@ const Skate = () => {
         throw new Error("Couldn't refresh token");
       }
     },
+    onPlayerStateChanged: ({
+      paused,
+      position,
+      track_window: { current_track },
+    }: WebPlaybackState) => {
+      if (current_track.id !== chosenTrack.id) {
+        setSkateMapStatus("not loading");
+        setSkateMap(null);
+        setPlayerState(null);
+        setChosenTrack(null);
+      }
+      setPlayerState({
+        paused,
+        position,
+        positionTime: new Date().getTime(),
+      });
+    },
   });
 
   const [skateableTracks, setSkateableTracks] = useState<TrackSkateability[]>(
@@ -35,6 +69,8 @@ const Skate = () => {
   );
 
   const [chosenTrack, setChosenTrack] = useState<TrackObject | null>(null);
+
+  const [playerState, setPlayerState] = useState<PlayerState>(null);
 
   const [skateMapStatus, setSkateMapStatus] = useState<SkateMapStatus>(
     "not loading"
@@ -76,7 +112,11 @@ const Skate = () => {
           <link rel="icon" href="/favicon.ico" />
         </Head>
         {skateMapStatus === "loaded" ? (
-          <ThreeCanvas className={styles.canvas} skateMap={skateMap} />
+          <ThreeCanvas
+            className={styles.canvas}
+            skateMap={skateMap}
+            playerState={playerState}
+          />
         ) : (
           <main className={styles.main}>
             <h1 className={styles.title}>{titleText}</h1>
