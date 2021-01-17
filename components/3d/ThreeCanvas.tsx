@@ -5,6 +5,7 @@ import SkateMapPlane from "./SkateMapPlane";
 import Cube from "./Cube";
 
 import * as CANNON from "cannon-es";
+import Controls from "./Controls";
 
 interface ThreeCanvasProps {
   className: string;
@@ -31,20 +32,19 @@ const ThreeCanvas: React.FC<ThreeCanvasProps> = (props) => {
     <Canvas
       concurrent
       gl={{ antialias: false }}
-      camera={{ position: [0, 2.5, -5], far: 60 }}
+      camera={{ position: [0, 2.5, -5], far: 40 }}
       {...props}
       shadowMap
     >
       <color attach="background" args={[0, 0, 0]} />
-      <ambientLight intensity={0.05} />
-      <pointLight
-        castShadow
-        position={[0, 2, -3]}
-        distance={50}
-        intensity={0.5}
-      />
+      <ambientLight intensity={0.5} />
+      <pointLight castShadow position={[0, 2, -3]} intensity={0.5} />
       <SkateMapPlane data={skateMap} world={world} />
-      <Cube world={world} />
+      {
+        //<Cube world={world} />
+      }
+
+      <Controls />
     </Canvas>
   );
 };

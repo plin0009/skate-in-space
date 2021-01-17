@@ -10,7 +10,7 @@ interface SkateMapPlaneProps {
   world: CANNON.World;
 }
 const SkateMapPlane: React.FC<SkateMapPlaneProps> = ({ data, world }) => {
-  const squareSize = 3;
+  const squareSize = 1;
   const { widthSegments, heightSegments, heights } = data;
 
   const { body } = useMemo(() => {
@@ -19,7 +19,7 @@ const SkateMapPlane: React.FC<SkateMapPlaneProps> = ({ data, world }) => {
     });
     const body = new CANNON.Body({ mass: 0 });
     body.addShape(shape);
-    body.position.set(0, -4, 2);
+    body.position.set(0, -4, (heightSegments / 2) * squareSize - 2);
     body.quaternion.setFromEuler(-Math.PI / 2, 0, 0);
 
     return { body };
@@ -70,7 +70,7 @@ const SkateMapPlane: React.FC<SkateMapPlaneProps> = ({ data, world }) => {
           heightSegments,
         ]}
       />
-      <meshLambertMaterial attach="material" color="#ff8823" />
+      <meshLambertMaterial attach="material" color="#ff8823" wireframe />
     </mesh>
   );
 };
